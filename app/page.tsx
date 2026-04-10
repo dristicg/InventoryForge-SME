@@ -1,63 +1,88 @@
-import Image from "next/image";
+import Link from "next/link";
+import { ArrowRight, Package, ShoppingCart, BarChart3, Settings } from "lucide-react";
 
 export default function Home() {
   return (
-    <div className="flex flex-col flex-1 items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex flex-1 w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
+    <div className="min-h-screen bg-slate-50">
+      {/* Navbar */}
+      <nav className="border-b border-slate-200 bg-white">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+          <div className="flex h-16 justify-between items-center">
+            <div className="flex items-center gap-2">
+              <Package className="h-8 w-8 text-blue-600" />
+              <span className="text-xl font-bold tracking-tight text-slate-900">InventoryForge</span>
+            </div>
+            <div>
+              <Link 
+                href="/dashboard/products"
+                className="inline-flex items-center justify-center rounded-lg bg-slate-900 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-slate-800"
+              >
+                Go to Dashboard
+              </Link>
+            </div>
+          </div>
         </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
+      </nav>
+
+      {/* Hero Section */}
+      <main className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-24">
+        <div className="text-center max-w-3xl mx-auto space-y-8">
+          <h1 className="text-5xl font-extrabold tracking-tight text-slate-900 sm:text-6xl">
+            SME Inventory Management <span className="text-blue-600">Reimagined</span>.
+          </h1>
+          <p className="text-lg leading-8 text-slate-600">
+            A comprehensive operational hub for your business. Track product stock live, manage B2B sales cycles, and monitor supply chains natively with Server Actions.
+          </p>
+          <div className="flex items-center justify-center gap-4 pt-4">
+            <Link
+              href="/dashboard/products"
+              className="inline-flex items-center justify-center rounded-xl bg-blue-600 px-8 py-3.5 text-base font-semibold text-white shadow-sm transition-all hover:bg-blue-700 hover:scale-105"
+            >
+              Enter Dashboard
+              <ArrowRight className="ml-2 h-5 w-5" />
+            </Link>
+            <Link
+              href="/sales"
+              className="inline-flex items-center justify-center rounded-xl bg-white px-8 py-3.5 text-base font-semibold text-slate-900 shadow-sm ring-1 ring-inset ring-slate-300 transition-all hover:bg-slate-50"
+            >
+              View Sales
+            </Link>
+          </div>
+        </div>
+
+        {/* Features Preview */}
+        <div className="mt-24 grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-4">
+          <div className="bg-white rounded-2xl p-6 shadow-sm border border-slate-200">
+            <div className="h-12 w-12 rounded-lg bg-blue-50 text-blue-600 flex items-center justify-center mb-4">
+              <Package className="h-6 w-6" />
+            </div>
+            <h3 className="text-lg font-semibold text-slate-900">Live Inventory</h3>
+            <p className="mt-2 text-sm text-slate-600">Track SKUs, generate QR codes seamlessly, and monitor live stock deductions via real-time hooks.</p>
+          </div>
+          
+          <div className="bg-white rounded-2xl p-6 shadow-sm border border-slate-200">
+            <div className="h-12 w-12 rounded-lg bg-green-50 text-green-600 flex items-center justify-center mb-4">
+              <ShoppingCart className="h-6 w-6" />
+            </div>
+            <h3 className="text-lg font-semibold text-slate-900">Sales Orders</h3>
+            <p className="mt-2 text-sm text-slate-600">Manage comprehensive B2B order pipelines securely on the backend with edge-cached forms.</p>
+          </div>
+
+          <div className="bg-white rounded-2xl p-6 shadow-sm border border-slate-200">
+            <div className="h-12 w-12 rounded-lg bg-purple-50 text-purple-600 flex items-center justify-center mb-4">
+              <BarChart3 className="h-6 w-6" />
+            </div>
+            <h3 className="text-lg font-semibold text-slate-900">Analytics (Coming Soon)</h3>
+            <p className="mt-2 text-sm text-slate-600">Visualize raw data into actionable manufacturing forecasts and cash influx patterns.</p>
+          </div>
+
+          <div className="bg-white rounded-2xl p-6 shadow-sm border border-slate-200">
+            <div className="h-12 w-12 rounded-lg bg-orange-50 text-orange-600 flex items-center justify-center mb-4">
+              <Settings className="h-6 w-6" />
+            </div>
+            <h3 className="text-lg font-semibold text-slate-900">Admin Control</h3>
+            <p className="mt-2 text-sm text-slate-600">Modify granular role access and export compliance reports globally.</p>
+          </div>
         </div>
       </main>
     </div>
