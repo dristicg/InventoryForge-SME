@@ -157,7 +157,7 @@ export default function NewPurchaseClient({ availableProducts }: NewPurchaseClie
                   placeholder="e.g. Global Tech Distributors"
                   value={supplierName}
                   onChange={(e) => setSupplierName(e.target.value)}
-                  className="block w-full rounded-xl border-0 py-2.5 text-slate-900 shadow-sm ring-1 ring-inset ring-slate-300 placeholder:text-slate-400 focus:ring-2 focus:ring-inset focus:ring-blue-600 sm:text-sm sm:leading-6 transition-all"
+                  className="block w-full rounded-xl border-0 py-2.5 px-4 text-slate-900 shadow-sm ring-1 ring-inset ring-slate-300 placeholder:text-slate-400 focus:ring-2 focus:ring-inset focus:ring-blue-600 sm:text-sm sm:leading-6 transition-all"
                 />
               </div>
             </div>
@@ -191,11 +191,11 @@ export default function NewPurchaseClient({ availableProducts }: NewPurchaseClie
                         }}
                         onFocus={() => setIsDropdownOpen(true)}
                         placeholder="Search known products..."
-                        className="block w-full rounded-lg border-0 py-2 pl-10 text-slate-900 ring-1 ring-inset ring-slate-300 focus:ring-2 focus:ring-purple-600 sm:text-sm"
+                        className="block w-full rounded-lg border-0 py-2 pl-10 pr-4 text-slate-900 ring-1 ring-inset ring-slate-300 focus:ring-2 focus:ring-purple-600 sm:text-sm"
                       />
                     </div>
                     
-                    {isDropdownOpen && productSearch.length > 0 && !selectedProduct && (
+                    {isDropdownOpen && !selectedProduct && (
                       <ul className="absolute z-10 mt-1 max-h-60 w-full overflow-auto rounded-lg bg-white py-1 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none text-sm">
                         {filteredProducts.length > 0 ? (
                           filteredProducts.map((p) => (
@@ -225,8 +225,9 @@ export default function NewPurchaseClient({ availableProducts }: NewPurchaseClie
                       type="number"
                       min="1"
                       value={quantity}
+                      onFocus={(e) => e.target.select()}
                       onChange={(e) => setQuantity(Number(e.target.value))}
-                      className="block w-full rounded-lg border-0 py-2 text-slate-900 ring-1 ring-inset ring-slate-300 focus:ring-2 focus:ring-purple-600 sm:text-sm"
+                      className="block w-full rounded-lg border-0 py-2 px-4 text-slate-900 ring-1 ring-inset ring-slate-300 focus:ring-2 focus:ring-purple-600 sm:text-sm"
                     />
                   </div>
 
@@ -236,7 +237,7 @@ export default function NewPurchaseClient({ availableProducts }: NewPurchaseClie
                       type="number"
                       disabled
                       value={selectedProduct ? (selectedProduct.cost_price ?? (selectedProduct.selling_price * 0.5)).toFixed(2) : ""}
-                      className="block w-full rounded-lg border-0 py-2 text-slate-500 bg-slate-100 ring-1 ring-inset ring-slate-200 sm:text-sm cursor-not-allowed"
+                      className="block w-full rounded-lg border-0 py-2 px-4 text-slate-500 bg-slate-100 ring-1 ring-inset ring-slate-200 sm:text-sm cursor-not-allowed"
                     />
                   </div>
                   
@@ -263,8 +264,9 @@ export default function NewPurchaseClient({ availableProducts }: NewPurchaseClie
                         <div className="flex items-center gap-2 mt-1">
                           <input 
                             type="number" 
-                            className="text-xs w-16 p-1 border rounded" 
+                            className="text-xs w-16 p-1 px-2 border rounded" 
                             value={item.quantity}
+                            onFocus={(e) => e.target.select()}
                             onChange={e => updateItemQty(item.product_id, Number(e.target.value))}
                           />
                           <p className="text-xs text-slate-500">units @ ${item.rate.toFixed(2)} cost</p>

@@ -149,7 +149,7 @@ export default function NewOrderClient({ availableProducts }: NewOrderClientProp
                   placeholder="e.g. Acme Corporation"
                   value={customerName}
                   onChange={(e) => setCustomerName(e.target.value)}
-                  className="block w-full rounded-xl border-0 py-2.5 text-slate-900 shadow-sm ring-1 ring-inset ring-slate-300 placeholder:text-slate-400 focus:ring-2 focus:ring-inset focus:ring-blue-600 sm:text-sm sm:leading-6 transition-all"
+                  className="block w-full rounded-xl border-0 py-2.5 px-4 text-slate-900 shadow-sm ring-1 ring-inset ring-slate-300 placeholder:text-slate-400 focus:ring-2 focus:ring-inset focus:ring-blue-600 sm:text-sm sm:leading-6 transition-all"
                 />
               </div>
             </div>
@@ -186,12 +186,12 @@ export default function NewOrderClient({ availableProducts }: NewOrderClientProp
                         }}
                         onFocus={() => setIsDropdownOpen(true)}
                         placeholder="Search products..."
-                        className="block w-full rounded-lg border-0 py-2 pl-10 text-slate-900 ring-1 ring-inset ring-slate-300 focus:ring-2 focus:ring-blue-600 sm:text-sm"
+                        className="block w-full rounded-lg border-0 py-2 pl-10 pr-4 text-slate-900 ring-1 ring-inset ring-slate-300 focus:ring-2 focus:ring-blue-600 sm:text-sm"
                       />
                     </div>
                     
                     {/* Dropdown Results */}
-                    {isDropdownOpen && productSearch.length > 0 && !selectedProduct && (
+                    {isDropdownOpen && !selectedProduct && (
                       <ul className="absolute z-10 mt-1 max-h-60 w-full overflow-auto rounded-lg bg-white py-1 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none text-sm">
                         {filteredProducts.length > 0 ? (
                           filteredProducts.map((p) => (
@@ -221,8 +221,9 @@ export default function NewOrderClient({ availableProducts }: NewOrderClientProp
                       type="number"
                       min="1"
                       value={quantity}
+                      onFocus={(e) => e.target.select()}
                       onChange={(e) => setQuantity(Number(e.target.value))}
-                      className="block w-full rounded-lg border-0 py-2 text-slate-900 ring-1 ring-inset ring-slate-300 focus:ring-2 focus:ring-blue-600 sm:text-sm"
+                      className="block w-full rounded-lg border-0 py-2 px-4 text-slate-900 ring-1 ring-inset ring-slate-300 focus:ring-2 focus:ring-blue-600 sm:text-sm"
                     />
                   </div>
 

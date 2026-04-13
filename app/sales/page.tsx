@@ -15,7 +15,7 @@ export default async function SalesPage() {
   ]);
 
   return (
-    <div className="min-h-screen bg-slate-50 p-6 md:p-8">
+    <div className="min-h-screen bg-zinc-950 p-6 md:p-8">
       <div className="mx-auto max-w-[1400px]">
         {/* Pass fetched data to the client interactive layer */}
         <SalesListClient initialOrders={initialOrders} availableProducts={products} />

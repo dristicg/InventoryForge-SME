@@ -167,10 +167,10 @@ export default function NewBatchClient({ availableProducts }: CompProps) {
                     }}
                     onFocus={() => setIsOutputDropdownOpen(true)}
                     placeholder="Search catalogue..."
-                    className="block w-full rounded-xl border-0 py-3 pl-3 text-slate-900 shadow-sm ring-2 ring-transparent focus:ring-indigo-400 sm:text-sm bg-white/90 backdrop-blur"
+                    className="block w-full rounded-xl border-0 py-3 px-4 text-slate-900 shadow-sm ring-2 ring-transparent focus:ring-indigo-400 sm:text-sm bg-white/90 backdrop-blur"
                   />
                   
-                  {isOutputDropdownOpen && outputProductSearch.length > 0 && !selectedOutputProduct && (
+                  {isOutputDropdownOpen && !selectedOutputProduct && (
                       <ul className="absolute z-20 mt-2 max-h-60 w-full overflow-auto rounded-xl bg-white py-1 shadow-2xl ring-1 ring-black/5 focus:outline-none text-sm">
                         {filteredOutputProducts.length > 0 ? (
                           filteredOutputProducts.map((p) => (
@@ -193,8 +193,9 @@ export default function NewBatchClient({ availableProducts }: CompProps) {
                   type="number"
                   min="1"
                   value={outputQuantity}
+                  onFocus={(e) => e.target.select()}
                   onChange={(e) => setOutputQuantity(Number(e.target.value))}
-                  className="block w-full rounded-xl border-0 py-3 px-3 text-slate-900 shadow-sm bg-white/90 backdrop-blur font-bold text-lg"
+                  className="block w-full rounded-xl border-0 py-3 px-4 text-slate-900 shadow-sm bg-white/90 backdrop-blur font-bold text-lg"
                 />
               </div>
             </div>
@@ -235,11 +236,11 @@ export default function NewBatchClient({ availableProducts }: CompProps) {
                         }}
                         onFocus={() => setIsComponentDropdownOpen(true)}
                         placeholder="Search products/raw..."
-                        className="block w-full rounded-lg border-0 py-2.5 pl-10 text-slate-900 ring-1 ring-inset ring-slate-200 focus:ring-2 focus:ring-indigo-600 sm:text-sm bg-white"
+                        className="block w-full rounded-lg border-0 py-2.5 pl-10 pr-4 text-slate-900 ring-1 ring-inset ring-slate-200 focus:ring-2 focus:ring-indigo-600 sm:text-sm bg-white"
                       />
                     </div>
                     
-                    {isComponentDropdownOpen && componentSearch.length > 0 && !selectedComponent && (
+                    {isComponentDropdownOpen && !selectedComponent && (
                       <ul className="absolute z-10 mt-1 max-h-48 w-full overflow-auto rounded-lg bg-white shadow-xl ring-1 ring-black/5 focus:outline-none text-sm">
                         {filteredComponents.length > 0 ? (
                           filteredComponents.map((p) => (
@@ -261,8 +262,9 @@ export default function NewBatchClient({ availableProducts }: CompProps) {
                       type="number"
                       min="1"
                       value={componentQuantity}
+                      onFocus={(e) => e.target.select()}
                       onChange={(e) => setComponentQuantity(Number(e.target.value))}
-                      className="block w-full rounded-lg border-0 py-2.5 text-center font-bold text-slate-900 ring-1 ring-inset ring-slate-200 focus:ring-2 focus:ring-indigo-600 sm:text-sm"
+                      className="block w-full rounded-lg border-0 py-2.5 px-4 text-center font-bold text-slate-900 ring-1 ring-inset ring-slate-200 focus:ring-2 focus:ring-indigo-600 sm:text-sm"
                     />
                   </div>
                   

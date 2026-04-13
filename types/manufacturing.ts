@@ -12,7 +12,7 @@ export interface ManufacturingRawMaterial {
 
 export interface ManufacturingBatch {
   id: string;
-  batch_number: string;
+  batch_number: string; 
   output_product_id: string;
   output_quantity: number;
   status: ManufacturingBatchStatus;

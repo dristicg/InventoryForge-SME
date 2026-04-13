@@ -2,10 +2,12 @@
 
 import React, { useState } from "react";
 import Link from "next/link";
-import { Plus, LayoutKanban, List as ListIcon, Hammer, ArrowRight, CheckCircle2, Factory, Layers, PlayCircle, Loader2 } from "lucide-react";
+import { Plus, Columns, List as ListIcon, Hammer, ArrowRight, CheckCircle2, Factory, Layers, PlayCircle, Loader2, FileDown, Share2 } from "lucide-react";
 import { toast } from "sonner";
 import { ManufacturingBatch, ManufacturingBatchStatus } from "../../types/manufacturing";
 import { updateBatchStatus } from "../actions/manufacturing";
+import { generateProfessionalPDF } from "../../lib/pdf/generator";
+import { uploadOrderPDF, generateWhatsAppLink } from "../actions/storage";
 
 interface CompProps {
   initialBatches: ManufacturingBatch[];
@@ -42,6 +44,44 @@ export default function ManufacturingClient({ initialBatches }: CompProps) {
     }
   };
 
+  const [isProcessingFile, setIsProcessingFile] = useState<string | null>(null);
+
+  const handleDownloadPDF = (batch: ManufacturingBatch) => {
+    const doc = generateProfessionalPDF(batch, "Manufacturing Batch");
+    doc.save(`Batch_${batch.batch_number || batch.id.substring(0, 8)}.pdf`);
+    toast.success("PDF Downloaded");
+  };
+
+  const handleWhatsAppShare = async (batch: ManufacturingBatch) => {
+    setIsProcessingFile(batch.id);
+    toast.info("Preparing shareable link...");
+    
+    try {
+      const doc = generateProfessionalPDF(batch, "Manufacturing Batch");
+      const pdfBase64 = doc.output("datauristring");
+      const fileName = `MFG_${batch.id.substring(0, 8)}_${Date.now()}.pdf`;
+
+      const uploadResult = await uploadOrderPDF(pdfBase64, fileName);
+      
+      const shareUrl = await generateWhatsAppLink(
+        batch.batch_number || batch.id.substring(0, 8),
+        batch.output_product?.name || "Assembly Order",
+        0, // Manufacturing doesn't usually have a 'total cost' displayed the same way as Sales
+        uploadResult.success ? uploadResult.url : undefined
+      );
+
+      window.open(shareUrl, "_blank");
+      
+      if (!uploadResult.success) {
+        toast.warning("Link shared without file (Storage Bucket 'documents' not found/configured).");
+      }
+    } catch (e: any) {
+      toast.error("Failed to share on WhatsApp.");
+    } finally {
+      setIsProcessingFile(null);
+    }
+  };
+
   const getColColor = (status: string) => {
     switch (status) {
       case "Pending": return "bg-amber-100/50 border-amber-200 text-amber-900";
@@ -56,24 +96,24 @@ export default function ManufacturingClient({ initialBatches }: CompProps) {
       {/* Header & Controls */}
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight text-slate-900 flex items-center gap-2">
-            <Factory className="h-8 w-8 text-indigo-600" />
+          <h1 className="text-3xl font-bold tracking-tight text-white flex items-center gap-2">
+            <Factory className="h-8 w-8 text-indigo-500" />
             Manufacturing Operations
           </h1>
-          <p className="text-slate-500 mt-1">Transform raw materials into finished inventory automatically.</p>
+          <p className="text-zinc-400 mt-1">Transform raw materials into finished inventory automatically.</p>
         </div>
         
         <div className="flex items-center gap-3 w-full sm:w-auto">
-          <div className="bg-white p-1 rounded-lg flex border border-slate-200 shadow-sm">
+          <div className="bg-zinc-900 p-1 rounded-lg flex border border-white/5 shadow-sm">
             <button 
               onClick={() => setViewMode("kanban")}
-              className={`p-2 rounded-md transition-all ${viewMode === "kanban" ? "bg-indigo-50 text-indigo-700 shadow-sm" : "text-slate-500 hover:text-slate-900 hover:bg-slate-50"}`}
+              className={`p-2 rounded-md transition-all ${viewMode === "kanban" ? "bg-indigo-600/10 text-indigo-400 shadow-sm" : "text-zinc-500 hover:text-white hover:bg-zinc-800"}`}
             >
-              <LayoutKanban className="h-4 w-4" />
+              <Columns className="h-4 w-4" />
             </button>
             <button 
               onClick={() => setViewMode("list")}
-              className={`p-2 rounded-md transition-all ${viewMode === "list" ? "bg-indigo-50 text-indigo-700 shadow-sm" : "text-slate-500 hover:text-slate-900 hover:bg-slate-50"}`}
+              className={`p-2 rounded-md transition-all ${viewMode === "list" ? "bg-indigo-600/10 text-indigo-400 shadow-sm" : "text-zinc-500 hover:text-white hover:bg-zinc-800"}`}
             >
               <ListIcon className="h-4 w-4" />
             </button>
@@ -95,20 +135,20 @@ export default function ManufacturingClient({ initialBatches }: CompProps) {
           {columns.map((col) => {
             const colBatches = batches.filter(b => b.status === col);
             return (
-              <div key={col} className={`flex flex-col rounded-2xl border bg-slate-50/50 overflow-hidden ${getColColor(col).split(' ').slice(0,2).join(' ')}`}>
-                <div className={`px-5 py-4 border-b bg-white/50 backdrop-blur-md flex justify-between items-center ${getColColor(col).split(' ')[1]}`}>
-                  <h3 className="font-bold text-sm tracking-wide uppercase">{col}</h3>
-                  <span className="bg-white rounded-full px-2.5 py-0.5 text-xs font-semibold shadow-sm">{colBatches.length}</span>
+              <div key={col} className={`flex flex-col rounded-2xl border bg-zinc-900/50 overflow-hidden ${col === 'In Progress' ? 'border-indigo-500/20' : 'border-white/5'}`}>
+                <div className="px-5 py-4 border-b border-white/5 bg-zinc-800/50 backdrop-blur-md flex justify-between items-center">
+                  <h3 className="font-bold text-sm tracking-wide uppercase text-zinc-400">{col}</h3>
+                  <span className="bg-zinc-800 text-white rounded-full px-2.5 py-0.5 text-xs font-semibold shadow-sm">{colBatches.length}</span>
                 </div>
                 
                 <div className="flex-1 p-4 overflow-y-auto space-y-4">
                   {colBatches.length === 0 ? (
-                    <div className="h-32 border-2 border-dashed border-slate-200 rounded-xl flex items-center justify-center text-slate-400 text-sm">
+                    <div className="h-32 border-2 border-dashed border-white/5 rounded-xl flex items-center justify-center text-zinc-600 text-sm">
                       No batches
                     </div>
                   ) : (
                     colBatches.map(batch => (
-                      <div key={batch.id} className="bg-white rounded-xl border border-slate-200 shadow-sm hover:shadow-md hover:border-indigo-200 transition-all p-5 relative group overflow-hidden">
+                      <div key={batch.id} className="bg-zinc-900 rounded-xl border border-white/5 shadow-sm hover:shadow-md hover:border-indigo-500/30 transition-all p-5 relative group overflow-hidden">
                         
                         {/* Loading overlay for optimistic state wait */}
                         {isUpdating === batch.id && (
@@ -120,6 +160,23 @@ export default function ManufacturingClient({ initialBatches }: CompProps) {
                         
                         <div className="flex justify-between items-start mb-3">
                           <span className="text-xs font-mono font-medium text-slate-500 bg-slate-100 px-2 py-1 rounded-md">{batch.batch_number || batch.id.slice(0,8)}</span>
+                          <div className="flex items-center gap-1">
+                            <button
+                              onClick={() => handleDownloadPDF(batch)}
+                              className="p-1.5 text-slate-400 hover:text-slate-600 hover:bg-slate-100 rounded-lg transition-colors"
+                              title="Download PDF"
+                            >
+                              <FileDown className="h-4 w-4" />
+                            </button>
+                            <button
+                              onClick={() => handleWhatsAppShare(batch)}
+                              disabled={isProcessingFile === batch.id}
+                              className="p-1.5 text-slate-400 hover:text-green-600 hover:bg-green-50 rounded-lg transition-colors disabled:opacity-50"
+                              title="Share on WhatsApp"
+                            >
+                              <Share2 className="h-4 w-4" />
+                            </button>
+                          </div>
                         </div>
                         
                         <h4 className="font-bold text-slate-900 leading-tight mb-4">
@@ -207,15 +264,25 @@ export default function ManufacturingClient({ initialBatches }: CompProps) {
                       </span>
                     </td>
                     <td className="px-6 py-4 text-right">
-                       {batch.status === "Pending" && (
-                          <button onClick={() => handleStatusChange(batch.id, "In Progress")} disabled={isUpdating === batch.id} className="text-indigo-600 font-semibold text-xs hover:text-indigo-800 disabled:opacity-50">Advance to Assembly</button>
-                       )}
-                       {batch.status === "In Progress" && (
-                          <button onClick={() => handleStatusChange(batch.id, "Completed")} disabled={isUpdating === batch.id} className="text-emerald-600 font-bold text-xs hover:text-emerald-800 disabled:opacity-50">Mark Finished</button>
-                       )}
-                       {batch.status === "Completed" && (
-                          <span className="text-slate-400 text-xs font-medium italic">— Restocked —</span>
-                       )}
+                       <div className="flex items-center justify-end gap-3">
+                         <div className="flex items-center gap-1 mr-2 px-2 border-r border-slate-200">
+                           <button onClick={() => handleDownloadPDF(batch)} className="p-1 text-slate-500 hover:text-slate-900" title="Download">
+                             <FileDown className="h-4 w-4" />
+                           </button>
+                           <button onClick={() => handleWhatsAppShare(batch)} disabled={isProcessingFile === batch.id} className="p-1 text-slate-500 hover:text-green-600" title="WhatsApp">
+                             <Share2 className="h-4 w-4" />
+                           </button>
+                         </div>
+                         {batch.status === "Pending" && (
+                            <button onClick={() => handleStatusChange(batch.id, "In Progress")} disabled={isUpdating === batch.id} className="text-indigo-600 font-semibold text-xs hover:text-indigo-800 disabled:opacity-50">Advance to Assembly</button>
+                         )}
+                         {batch.status === "In Progress" && (
+                            <button onClick={() => handleStatusChange(batch.id, "Completed")} disabled={isUpdating === batch.id} className="text-emerald-600 font-bold text-xs hover:text-emerald-800 disabled:opacity-50">Mark Finished</button>
+                         )}
+                         {batch.status === "Completed" && (
+                            <span className="text-slate-400 text-xs font-medium italic">— Restocked —</span>
+                         )}
+                       </div>
                     </td>
                   </tr>
                 )) : (
@@ -225,7 +292,7 @@ export default function ManufacturingClient({ initialBatches }: CompProps) {
                     </td>
                   </tr>
                 )}
-              </td>
+              </tbody>
             </table>
           </div>
         </div>

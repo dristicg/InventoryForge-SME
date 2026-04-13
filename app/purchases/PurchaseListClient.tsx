@@ -2,10 +2,12 @@
 
 import React, { useState, useMemo } from "react";
 import Link from "next/link";
-import { Search, Plus, Filter, PackageOpen, ChevronRight, X, Clock, PackageCheck, Truck, CheckCircle2 } from "lucide-react";
+import { Search, Plus, Filter, PackageOpen, ChevronRight, X, Clock, PackageCheck, Truck, CheckCircle2, FileDown, Share2 } from "lucide-react";
 import { toast } from "sonner";
 import { PurchaseOrder, PurchaseOrderStatus } from "../../types/purchase";
 import { updatePurchaseStatus } from "../actions/purchases";
+import { generateProfessionalPDF } from "../../lib/pdf/generator";
+import { uploadOrderPDF, generateWhatsAppLink } from "../actions/storage";
 
 interface PurchaseListClientProps {
   initialOrders: PurchaseOrder[];
@@ -62,13 +64,51 @@ export default function PurchaseListClient({ initialOrders }: PurchaseListClient
     }
   };
 
+  const [isProcessingFile, setIsProcessingFile] = useState(false);
+
+  const handleDownloadPDF = (order: PurchaseOrder) => {
+    const doc = generateProfessionalPDF(order, "Purchase Order");
+    doc.save(`PurchaseOrder_${order.po_number || order.id.substring(0, 8)}.pdf`);
+    toast.success("PDF Downloaded");
+  };
+
+  const handleWhatsAppShare = async (order: PurchaseOrder) => {
+    setIsProcessingFile(true);
+    toast.info("Preparing shareable link...");
+    
+    try {
+      const doc = generateProfessionalPDF(order, "Purchase Order");
+      const pdfBase64 = doc.output("datauristring");
+      const fileName = `PO_${order.id.substring(0, 8)}_${Date.now()}.pdf`;
+
+      const uploadResult = await uploadOrderPDF(pdfBase64, fileName);
+      
+      const shareUrl = await generateWhatsAppLink(
+        order.po_number || order.id.substring(0, 8),
+        order.supplier_name,
+        order.total_amount,
+        uploadResult.success ? uploadResult.url : undefined
+      );
+
+      window.open(shareUrl, "_blank");
+      
+      if (!uploadResult.success) {
+        toast.warning("Link shared without file (Storage Bucket 'documents' not found/configured).");
+      }
+    } catch (e: any) {
+      toast.error("Failed to share on WhatsApp.");
+    } finally {
+      setIsProcessingFile(false);
+    }
+  };
+
   return (
     <div className="space-y-8 pb-12">
       {/* Header Section */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight text-slate-900">Purchase Orders</h1>
-          <p className="text-slate-500 mt-1">Manage supplier inbound pipelines and auto-restock items.</p>
+          <h1 className="text-3xl font-bold tracking-tight text-white">Purchase Orders</h1>
+          <p className="text-zinc-400 mt-1">Manage supplier inbound pipelines and auto-restock items.</p>
         </div>
         <Link
           href="/purchases/new"
@@ -80,22 +120,22 @@ export default function PurchaseListClient({ initialOrders }: PurchaseListClient
       </div>
 
       {/* Toolbar / Search */}
-      <div className="flex flex-col sm:flex-row gap-4 items-center justify-between bg-white p-4 rounded-2xl shadow-sm border border-slate-200">
+      <div className="flex flex-col sm:flex-row gap-4 items-center justify-between bg-zinc-900 p-4 rounded-2xl shadow-sm border border-white/5">
         <div className="relative w-full sm:max-w-md">
           <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
-            <Search className="h-4 w-4 text-slate-400" />
+            <Search className="h-4 w-4 text-zinc-500" />
           </div>
           <input
             type="text"
             placeholder="Search by PO number, supplier or status..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            className="block w-full rounded-xl border-0 py-2.5 pl-10 pr-4 text-slate-900 ring-1 ring-inset ring-slate-200 placeholder:text-slate-400 focus:ring-2 focus:ring-inset focus:ring-blue-600 sm:text-sm bg-slate-50 transition-colors hover:bg-white"
+            className="block w-full rounded-xl border-0 py-2.5 pl-10 pr-4 text-white ring-1 ring-inset ring-white/10 placeholder:text-zinc-500 focus:ring-2 focus:ring-inset focus:ring-blue-600 sm:text-sm bg-zinc-800/50 transition-colors hover:bg-zinc-800"
           />
         </div>
         <div className="flex items-center gap-3">
-          <span className="text-sm font-medium text-slate-500">{filteredOrders.length} orders</span>
-          <button className="inline-flex items-center justify-center rounded-lg border border-slate-200 bg-white p-2.5 text-slate-600 hover:bg-slate-50">
+          <span className="text-sm font-medium text-zinc-400">{filteredOrders.length} orders</span>
+          <button className="inline-flex items-center justify-center rounded-lg border border-white/5 bg-zinc-900 p-2.5 text-zinc-400 hover:bg-zinc-800">
             <Filter className="h-4 w-4" />
           </button>
         </div>
@@ -108,26 +148,26 @@ export default function PurchaseListClient({ initialOrders }: PurchaseListClient
             <div 
               key={order.id} 
               onClick={() => setSelectedOrder(order)}
-              className="group relative flex flex-col bg-white rounded-2xl border border-slate-200 shadow-sm hover:shadow-md hover:border-blue-200 transition-all cursor-pointer overflow-hidden p-6 gap-4"
+              className="group relative flex flex-col bg-zinc-900 rounded-2xl border border-white/5 shadow-sm hover:shadow-md hover:border-blue-500/30 transition-all cursor-pointer overflow-hidden p-6 gap-4"
             >
               <div className="flex justify-between items-start">
                 <div>
-                  <h3 className="font-semibold text-slate-900 line-clamp-1">{order.supplier_name}</h3>
-                  <p className="text-sm text-slate-500 font-mono mt-0.5">{order.po_number || order.id.slice(0, 13)}</p>
+                  <h3 className="font-semibold text-white line-clamp-1">{order.supplier_name}</h3>
+                  <p className="text-sm text-zinc-400 font-mono mt-0.5">{order.po_number || order.id.slice(0, 13)}</p>
                 </div>
                 <span className={`inline-flex items-center rounded-full px-2.5 py-1 text-xs font-semibold ring-1 ring-inset ${STATUS_COLORS[order.status]}`}>
                   {order.status}
                 </span>
               </div>
               
-              <div className="border-t border-slate-100 pt-4 flex items-center justify-between mt-auto">
+              <div className="border-t border-white/5 pt-4 flex items-center justify-between mt-auto">
                 <div>
-                  <p className="text-xs text-slate-500 mb-1">Total Cost</p>
-                  <p className="font-bold text-slate-900">${order.total_amount?.toFixed(2)}</p>
+                  <p className="text-xs text-zinc-500 mb-1">Total Cost</p>
+                  <p className="font-bold text-white">${order.total_amount?.toFixed(2)}</p>
                 </div>
                 <div className="text-right">
-                  <p className="text-xs text-slate-500 mb-1">Items</p>
-                  <p className="font-medium text-slate-700">{order.purchase_order_items?.length || 0} unique</p>
+                  <p className="text-xs text-zinc-500 mb-1">Items</p>
+                  <p className="font-medium text-zinc-300">{order.purchase_order_items?.length || 0} unique</p>
                 </div>
               </div>
 
@@ -157,15 +197,32 @@ export default function PurchaseListClient({ initialOrders }: PurchaseListClient
             <div className="px-6 flex items-center justify-between pb-6 border-b border-slate-100">
               <div>
                 <h2 className="text-xl font-bold text-slate-900">PO Details</h2>
-                <p className="text-sm font-mono text-slate-500 mt-1">{selectedOrder.po_number}</p>
+                <p className="text-sm font-mono text-slate-500 mt-1">{selectedOrder.po_number || selectedOrder.id}</p>
               </div>
-              <button
-                onClick={() => setSelectedOrder(null)}
-                className="rounded-full p-2 text-slate-400 hover:bg-slate-100 transition-colors"
-                disabled={isUpdating}
-              >
-                <X className="h-5 w-5" />
-              </button>
+              <div className="flex items-center gap-2">
+                <button
+                  onClick={() => handleDownloadPDF(selectedOrder)}
+                  className="p-2 text-slate-500 hover:bg-slate-100 rounded-lg transition-colors"
+                  title="Download PDF"
+                >
+                  <FileDown className="h-5 w-5" />
+                </button>
+                <button
+                  onClick={() => handleWhatsAppShare(selectedOrder)}
+                  disabled={isProcessingFile}
+                  className="p-2 text-green-600 hover:bg-green-50 rounded-lg transition-colors disabled:opacity-50"
+                  title="Share on WhatsApp"
+                >
+                  <Share2 className="h-5 w-5" />
+                </button>
+                <button
+                  onClick={() => setSelectedOrder(null)}
+                  className="rounded-full p-2 text-slate-400 hover:bg-slate-100 transition-colors ml-2"
+                  disabled={isUpdating}
+                >
+                  <X className="h-5 w-5" />
+                </button>
+              </div>
             </div>
 
             <div className="flex-1 overflow-y-auto p-6 space-y-8">

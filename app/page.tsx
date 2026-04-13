@@ -14,7 +14,7 @@ export default function Home() {
             </div>
             <div>
               <Link 
-                href="/dashboard/products"
+                href="/dashboard"
                 className="inline-flex items-center justify-center rounded-lg bg-slate-900 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-slate-800"
               >
                 Go to Dashboard
@@ -35,7 +35,7 @@ export default function Home() {
           </p>
           <div className="flex items-center justify-center gap-4 pt-4">
             <Link
-              href="/dashboard/products"
+              href="/dashboard"
               className="inline-flex items-center justify-center rounded-xl bg-blue-600 px-8 py-3.5 text-base font-semibold text-white shadow-sm transition-all hover:bg-blue-700 hover:scale-105"
             >
               Enter Dashboard

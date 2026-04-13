@@ -189,13 +189,13 @@ export default function ProductsPage() {
   }, [products, searchTerm]);
 
   return (
-    <div className="min-h-screen bg-slate-50/50 p-6">
+    <div className="min-h-screen bg-zinc-950 p-6 md:p-8">
       <div className="mx-auto max-w-7xl space-y-6">
         {/* Header */}
         <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
           <div>
-            <h1 className="text-3xl font-bold tracking-tight text-slate-900">Products</h1>
-            <p className="text-sm text-slate-500 mt-1">Manage your inventory products and generated QR codes.</p>
+            <h1 className="text-3xl font-bold tracking-tight text-white">Products</h1>
+            <p className="text-sm text-zinc-400 mt-1">Manage your inventory products and generated QR codes.</p>
           </div>
           <button
             onClick={() => {
@@ -210,54 +210,54 @@ export default function ProductsPage() {
         </div>
 
         {/* Toolbar */}
-        <div className="flex flex-col sm:flex-row gap-4 items-center justify-between rounded-xl bg-white p-4 shadow-sm border border-slate-200/60">
+        <div className="flex flex-col sm:flex-row gap-4 items-center justify-between rounded-xl bg-zinc-900 p-4 shadow-sm border border-white/5">
           <div className="relative w-full sm:max-w-md">
             <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
-              <Search className="h-4 w-4 text-slate-400" />
+              <Search className="h-4 w-4 text-zinc-500" />
             </div>
             <input
               type="text"
               placeholder="Search by name, SKU, or category..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="block w-full rounded-lg border-0 py-2 pl-10 pr-4 text-slate-900 ring-1 ring-inset ring-slate-300 placeholder:text-slate-400 focus:ring-2 focus:ring-inset focus:ring-blue-600 sm:text-sm sm:leading-6 bg-slate-50/50 transition-all hover:bg-white"
+              className="block w-full rounded-lg border-0 py-2 pl-10 pr-4 text-white ring-1 ring-inset ring-white/10 placeholder:text-zinc-500 focus:ring-2 focus:ring-inset focus:ring-blue-600 sm:text-sm sm:leading-6 bg-zinc-800/50 transition-all hover:bg-zinc-800"
             />
           </div>
-          <div className="text-sm text-slate-500">
-            Showing <span className="font-semibold text-slate-900">{filteredProducts.length}</span> items
+          <div className="text-sm text-zinc-400">
+            Showing <span className="font-semibold text-white">{filteredProducts.length}</span> items
           </div>
         </div>
 
         {/* Table View */}
-        <div className="overflow-hidden rounded-xl border border-slate-200/60 bg-white shadow-sm">
+        <div className="overflow-hidden rounded-xl border border-white/5 bg-zinc-900 shadow-sm">
           <div className="overflow-x-auto">
-            <table className="min-w-full divide-y divide-slate-200">
-              <thead className="bg-slate-50">
+            <table className="min-w-full divide-y divide-white/5">
+              <thead className="bg-zinc-800/50">
                 <tr>
-                  <th scope="col" className="px-6 py-4 text-left text-xs font-semibold text-slate-500 uppercase tracking-wider">Product Info</th>
-                  <th scope="col" className="px-6 py-4 text-left text-xs font-semibold text-slate-500 uppercase tracking-wider">SKU</th>
-                  <th scope="col" className="px-6 py-4 text-left text-xs font-semibold text-slate-500 uppercase tracking-wider">Price / Stock</th>
-                  <th scope="col" className="px-6 py-4 text-center text-xs font-semibold text-slate-500 uppercase tracking-wider">QR Code</th>
-                  <th scope="col" className="px-6 py-4 text-left text-xs font-semibold text-slate-500 uppercase tracking-wider">Status</th>
+                  <th scope="col" className="px-6 py-4 text-left text-xs font-semibold text-zinc-400 uppercase tracking-wider">Product Info</th>
+                  <th scope="col" className="px-6 py-4 text-left text-xs font-semibold text-zinc-400 uppercase tracking-wider">SKU</th>
+                  <th scope="col" className="px-6 py-4 text-left text-xs font-semibold text-zinc-400 uppercase tracking-wider">Price / Stock</th>
+                  <th scope="col" className="px-6 py-4 text-center text-xs font-semibold text-zinc-400 uppercase tracking-wider">QR Code</th>
+                  <th scope="col" className="px-6 py-4 text-left text-xs font-semibold text-zinc-400 uppercase tracking-wider">Status</th>
                   <th scope="col" className="relative px-6 py-4"><span className="sr-only">Actions</span></th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-slate-200 bg-white">
+              <tbody className="divide-y divide-white/5 bg-zinc-900">
                 {filteredProducts.length > 0 ? (
                   filteredProducts.map((p) => (
-                    <tr key={p.id} className="hover:bg-slate-50/80 transition-colors group">
+                    <tr key={p.id} className="hover:bg-zinc-800/50 transition-colors group">
                       <td className="whitespace-nowrap px-6 py-4">
-                        <div className="font-medium text-slate-900">{p.name}</div>
-                        <div className="text-sm text-slate-500">{p.category}</div>
+                        <div className="font-medium text-white">{p.name}</div>
+                        <div className="text-sm text-zinc-400">{p.category}</div>
                       </td>
                       <td className="whitespace-nowrap px-6 py-4">
-                        <div className="inline-flex items-center rounded-md bg-slate-100 px-2 py-1 text-xs font-medium text-slate-600 ring-1 ring-inset ring-slate-500/10 font-mono">
+                        <div className="inline-flex items-center rounded-md bg-zinc-800 px-2 py-1 text-xs font-medium text-zinc-300 ring-1 ring-inset ring-white/5 font-mono">
                           {p.sku}
                         </div>
                       </td>
                       <td className="whitespace-nowrap px-6 py-4">
-                        <div className="text-sm font-medium text-slate-900">${p.price.toFixed(2)}</div>
-                        <div className="text-sm text-slate-500">{p.stock} units left</div>
+                        <div className="text-sm font-medium text-white">${p.price.toFixed(2)}</div>
+                        <div className="text-sm text-zinc-400">{p.stock} units left</div>
                       </td>
                       <td className="whitespace-nowrap px-6 py-4 text-center">
                         <button
@@ -350,7 +350,7 @@ export default function ProductsPage() {
                       required
                       value={formData.name}
                       onChange={handleInputChange}
-                      className="block w-full rounded-lg border-0 py-2 text-slate-900 shadow-sm ring-1 ring-inset ring-slate-300 placeholder:text-slate-400 focus:ring-2 focus:ring-inset focus:ring-blue-600 sm:text-sm sm:leading-6"
+                      className="block w-full rounded-lg border-0 py-2 px-4 text-slate-900 shadow-sm ring-1 ring-inset ring-slate-300 placeholder:text-slate-400 focus:ring-2 focus:ring-inset focus:ring-blue-600 sm:text-sm sm:leading-6"
                       placeholder="e.g. Copper Wire Spool"
                     />
                   </div>
@@ -366,7 +366,7 @@ export default function ProductsPage() {
                       required
                       value={formData.sku}
                       onChange={handleInputChange}
-                      className="block w-full rounded-lg border-0 py-2 text-slate-900 shadow-sm ring-1 ring-inset ring-slate-300 focus:ring-2 focus:ring-inset focus:ring-blue-600 sm:text-sm sm:leading-6 uppercase"
+                      className="block w-full rounded-lg border-0 py-2 px-4 text-slate-900 shadow-sm ring-1 ring-inset ring-slate-300 focus:ring-2 focus:ring-inset focus:ring-blue-600 sm:text-sm sm:leading-6 uppercase"
                       placeholder="SKU-123"
                     />
                   </div>
@@ -381,7 +381,7 @@ export default function ProductsPage() {
                       required
                       value={formData.category}
                       onChange={handleInputChange}
-                      className="block w-full rounded-lg border-0 py-2 text-slate-900 shadow-sm ring-1 ring-inset ring-slate-300 focus:ring-2 focus:ring-inset focus:ring-blue-600 sm:text-sm sm:leading-6"
+                      className="block w-full rounded-lg border-0 py-2 px-4 text-slate-900 shadow-sm ring-1 ring-inset ring-slate-300 focus:ring-2 focus:ring-inset focus:ring-blue-600 sm:text-sm sm:leading-6"
                     >
                       <option value="">Select Category</option>
                       <option value="Electronics">Electronics</option>
@@ -406,8 +406,9 @@ export default function ProductsPage() {
                       step="0.01"
                       required
                       value={formData.price}
+                      onFocus={(e) => e.target.select()}
                       onChange={handleInputChange}
-                      className="block w-full rounded-lg border-0 py-2 pl-7 text-slate-900 shadow-sm ring-1 ring-inset ring-slate-300 focus:ring-2 focus:ring-inset focus:ring-blue-600 sm:text-sm sm:leading-6"
+                      className="block w-full rounded-lg border-0 py-2 pl-7 pr-4 text-slate-900 shadow-sm ring-1 ring-inset ring-slate-300 focus:ring-2 focus:ring-inset focus:ring-blue-600 sm:text-sm sm:leading-6"
                     />
                   </div>
                 </div>
@@ -422,8 +423,9 @@ export default function ProductsPage() {
                       min="0"
                       required
                       value={formData.stock}
+                      onFocus={(e) => e.target.select()}
                       onChange={handleInputChange}
-                      className="block w-full rounded-lg border-0 py-2 text-slate-900 shadow-sm ring-1 ring-inset ring-slate-300 focus:ring-2 focus:ring-inset focus:ring-blue-600 sm:text-sm sm:leading-6"
+                      className="block w-full rounded-lg border-0 py-2 px-4 text-slate-900 shadow-sm ring-1 ring-inset ring-slate-300 focus:ring-2 focus:ring-inset focus:ring-blue-600 sm:text-sm sm:leading-6"
                     />
                   </div>
                 </div>
